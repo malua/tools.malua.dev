@@ -11,13 +11,13 @@
   //   "nodejs_compat"
   // ],
   "vars": {
-    "PROD": "true",
+    "PROD": "true"
   },
   "kv_namespaces": [
     {
       "binding": "KVSoftwareList",
-      "id": "5655c7cf550e452e98bf22a1500ff653",
-    },
+      "id": "5655c7cf550e452e98bf22a1500ff653"
+    }
   ],
   // "r2_buckets": [
   //   {
@@ -29,9 +29,16 @@
     {
       "binding": "DB",
       "database_name": "software-list-db",
-      "database_id": "b9084235-301d-4e48-b944-d1ecc4bcc2ce",
-    },
+      "database_id": "b9084235-301d-4e48-b944-d1ecc4bcc2ce"
+    }
   ],
+  "routes": [
+    {
+      "pattern": "tools.malua.dev",
+      "zone_name": "malua.dev",
+      "custom_domain": true
+    }
+  ]
   // "ai": {
   //   "binding": "AI"
   // },
