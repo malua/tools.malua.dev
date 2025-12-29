@@ -70,3 +70,5 @@ export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Entry = typeof entries.$inferSelect;
 export type NewEntry = typeof entries.$inferInsert;
+export type Tag = typeof tags.$inferSelect;
+export type NewTag = typeof tags.$inferInsert;
