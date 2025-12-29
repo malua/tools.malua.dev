@@ -15,30 +15,9 @@ export default {
 				'../../frontend/.svelte-kit/cloudflare/_worker.js'
 			);
 
-			// Create a custom fetch that routes API calls internally
-			// This prevents SvelteKit SSR from making external requests to itself
-			const customFetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
-				const fetchRequest = new Request(input, init);
-				const fetchUrl = new URL(fetchRequest.url);
-
-				// If this is an API call, route it internally to Hono instead of making external request
-				if (fetchUrl.pathname.startsWith('/api/')) {
-					return honoApp.fetch(fetchRequest, env, ctx);
-				}
-
-				// For other requests, use normal fetch
-				return fetch(fetchRequest, init);
-			};
-
-			// Provide custom ASSETS binding and fetch to SvelteKit
-			const envWithCustomFetch = {
-				...env,
-				ASSETS: {
-					fetch: customFetch
-				}
-			};
-
-			return svelteHandler.fetch(request, envWithCustomFetch, ctx);
+			// SvelteKit SSR will call honoApp.fetch() directly for API data,
+			// so no custom fetch interception needed
+			return svelteHandler.fetch(request, env, ctx);
 		} catch (error) {
 			return new Response(`Build frontend first: cd frontend && npm run build\n\nError: ${error}`, {
 				status: 503
