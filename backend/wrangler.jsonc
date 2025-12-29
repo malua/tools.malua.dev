@@ -38,7 +38,9 @@
       "zone_name": "malua.dev",
       "custom_domain": true
     }
-  ]
+  ],
+  "workers_dev": true,
+  "preview_urls": false
   // "ai": {
   //   "binding": "AI"
   // },
