@@ -2,7 +2,14 @@
   "name": "hono-svelte-5",
   "version": "1.0.0",
   "author": "Lukas Mayr",
-  "scripts": {},
+  "scripts": {
+    "build": "npm run build:frontend && npm run build:backend",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "echo 'Frontend built, ready to deploy'",
+    "deploy": "npm run build && cd backend && wrangler deploy --minify src/worker.ts",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev"
+  },
   "main": "index.ts",
   "module": "index.ts",
   "dependencies": {

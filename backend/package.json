@@ -1,8 +1,8 @@
 {
   "name": "backend",
   "scripts": {
-    "dev": "wrangler dev --port 8000",
-    "deploy": "wrangler deploy --minify",
+    "dev": "wrangler dev src/worker.ts --port 8000",
+    "deploy": "wrangler deploy --minify src/worker.ts",
     "type": "wrangler types --env-interface WorkerEnv ./src/lib/types/worker.d.ts",
     "db:init": "wrangler d1 execute DB --local --command=\"SELECT 1;\"",
     "db:generate": "drizzle-kit generate",
@@ -20,6 +20,7 @@
     "hono": "^4.7.4"
   },
   "devDependencies": {
+    "@cloudflare/kv-asset-handler": "^0.4.1",
     "drizzle-kit": "^0.30.5",
     "wrangler": "^4.10.0"
   }

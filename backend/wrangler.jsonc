@@ -1,8 +1,12 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "tools-collection-backend",
-  "main": "src/index.ts",
+  "name": "tools-collection-unified",
+  "main": "src/worker.ts",
   "compatibility_date": "2025-03-05",
+  "assets": {
+    "directory": "../frontend/.svelte-kit/cloudflare",
+    "binding": "ASSETS"
+  },
   // "compatibility_flags": [
   //   "nodejs_compat"
   // ],
