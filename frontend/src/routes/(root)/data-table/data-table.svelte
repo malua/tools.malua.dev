@@ -1,19 +1,46 @@
 <script lang="ts">
 	import { Column, createRender, createTable, Render, Subscribe } from 'svelte-headless-table';
-	import { readable } from 'svelte/store';
+	import { writable } from 'svelte/store';
 	import * as Table from '@/lib/components/ui/table';
 	import { Button } from '@/lib/components/ui/button';
+	import { Input } from '@/lib/components/ui/input';
 	import Tags from '../tags/tags.svelte';
 	import { api } from '@/lib/utils/api';
 	import userStore from '@/lib/stores/user.svelte';
 	import type { AnyPlugins } from 'svelte-headless-table/plugins';
 	import { Avatar } from '@/lib/components/ui/avatar';
+	import MultiSelect from 'svelte-multiselect';
+	import type { Tag } from '@backend/api/tag';
+	import { goto } from '$app/navigation';
 
-	const { software = [] } = $props();
+	const {
+		software = [],
+		tags = [],
+		nameFilter: initialNameFilter = '',
+		tagsFilter: initialTagsFilter = []
+	}: { software: any[]; tags: Tag[]; nameFilter?: string; tagsFilter?: string[] } = $props();
+
+	let nameFilter = $state(initialNameFilter);
+	let selectedTagFilters: string[] = $state(initialTagsFilter);
+
+	const tagNames = tags.map((tag) => tag.name);
+
+	function applyFilters() {
+		const params = new URLSearchParams();
+		if (nameFilter) params.set('name', nameFilter);
+		if (selectedTagFilters.length > 0) params.set('tags', selectedTagFilters.join(','));
+		const queryString = params.toString() ? `?${params.toString()}` : '';
+		goto(`/${queryString}`, { invalidateAll: true });
+	}
 
 	const user = userStore.user;
 
-	const table = createTable(readable(software));
+	const softwareStore = writable(software);
+	$effect(() => {
+		softwareStore.set(software);
+	});
+
+	const table = createTable(softwareStore);
 
 	const columnDefinitions: Column<any, AnyPlugins>[] = [
 		table.column({
@@ -79,6 +106,24 @@
 
 	const { headerRows, pageRows, tableAttrs, tableBodyAttrs } = table.createViewModel(columns);
 </script>
+
+<div class="mb-4 flex gap-4">
+	<div class="flex-1">
+		<Input
+			placeholder="Filter by name..."
+			bind:value={nameFilter}
+			onkeydown={(e) => e.key === 'Enter' && applyFilters()}
+		/>
+	</div>
+	<div class="w-64">
+		<MultiSelect
+			options={tagNames}
+			bind:selected={selectedTagFilters}
+			placeholder="Filter by tags..."
+			on:change={applyFilters}
+		/>
+	</div>
+</div>
 
 <div class="rounded-md border">
 	<Table.Root {...$tableAttrs}>

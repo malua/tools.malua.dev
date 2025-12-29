@@ -3,7 +3,7 @@ import { z } from "zod";
 import * as schema from "../services/db/schema";
 import { nanoid } from "nanoid";
 import { factory } from "@backend/lib/utils/factory";
-import { eq, inArray } from "drizzle-orm";
+import { eq, inArray, like } from "drizzle-orm";
 
 const entrySchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -52,7 +52,13 @@ export const saveNewEntry = factory.createHandlers(
 );
 
 export const getAllEntries = factory.createHandlers(async (c) => {
+  const nameFilter = c.req.query("name") || "";
+  const tagsFilter = c.req.query("tags")?.split(",").filter(Boolean) || [];
+
   const allEntries = await c.var.db.query.entries.findMany({
+    where: nameFilter
+      ? (entries, { like }) => like(entries.name, `%${nameFilter}%`)
+      : undefined,
     with: {
       entryTags: {
         with: {
@@ -62,7 +68,16 @@ export const getAllEntries = factory.createHandlers(async (c) => {
     },
   });
 
-  return c.json({ entries: allEntries });
+  // Filter by tags (entry must have ALL selected tags)
+  const filteredEntries =
+    tagsFilter.length > 0
+      ? allEntries.filter((entry) => {
+          const entryTagNames = entry.entryTags.map((et) => et.tag.name);
+          return tagsFilter.every((tag) => entryTagNames.includes(tag));
+        })
+      : allEntries;
+
+  return c.json({ entries: filteredEntries });
 });
 
 export const getEntryById = factory.createHandlers(async (c) => {

@@ -11,7 +11,7 @@
 
 	const user = userStore.user;
 
-	let { data }: { data: { entries: Entry[]; tags: Tag[] } } = $props();
+	let { data }: { data: { entries: Entry[]; tags: Tag[]; nameFilter: string; tagsFilter: string[] } } = $props();
 
 	let isOpen = $state(false);
 </script>
@@ -30,5 +30,6 @@
 </div>
 
 <div class="mx-4">
-	<DataTable software={data.entries}></DataTable>
+	<DataTable software={data.entries} tags={data.tags} nameFilter={data.nameFilter} tagsFilter={data.tagsFilter}
+	></DataTable>
 </div>
